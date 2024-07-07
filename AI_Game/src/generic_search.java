@@ -7,6 +7,25 @@ public class generic_search {
 	public static int column = 1;
 	public static int[][] grid = new int[1][1];
 
+	public static int[] move(int[] coordinates, char direction) {
+		int[] newCoordinates = coordinates.clone();
+		switch (direction) {
+		case 'N':
+			newCoordinates[0]--; // Move north (up)
+			break;
+		case 'S':
+			newCoordinates[0]++; // Move south (down)
+			break;
+		case 'E':
+			newCoordinates[1]++; // Move east (right)
+			break;
+		case 'W':
+			newCoordinates[1]--; // Move west (left)
+			break;
+		}
+		return newCoordinates;
+	}
+
 	public static boolean goalTest(Map<Integer, int[]> coordinatesMap) {
 		int[] firstCoordinates = null;
 		for (Map.Entry<Integer, int[]> entry : coordinatesMap.entrySet()) {

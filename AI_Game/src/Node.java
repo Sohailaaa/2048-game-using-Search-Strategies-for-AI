@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 
 public class Node {
@@ -19,7 +20,9 @@ public class Node {
 	public void checkOrganimsCollision(int org_id, int[] new_coordinates, Map<Integer, int[]> grid,
 			ArrayList<Integer> organisms_id) {
 
-		for (Map.Entry<Integer, int[]> entry : grid.entrySet()) {
+		Iterator<Map.Entry<Integer, int[]>> iterator = grid.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<Integer, int[]> entry = iterator.next();
 			int otherOrgId = entry.getKey();
 			int[] otherCoordinates = entry.getValue();
 
@@ -29,10 +32,11 @@ public class Node {
 				// Handle collision logic here (e.g., mark collision, remove both entries, etc.)
 				System.out.println("Collision detected between organism " + org_id + " and organism " + otherOrgId);
 				// Example: Remove the other organism from the grid and organisms_id
-				grid.remove(otherOrgId);
+				iterator.remove(); // Safely remove the current entry
 				organisms_id.remove(Integer.valueOf(otherOrgId));
 			}
 		}
+
 	}
 
 	public void updateGrid() {
@@ -48,7 +52,7 @@ public class Node {
 	}
 
 	public static int[] move(int[] coordinates, int direction) {
-		int[] newCoordinates = coordinates.clone();
+		int[] newCoordinates = new int[] { coordinates[0], coordinates[1] };
 		switch (direction) {
 		case 1:
 			newCoordinates[0]--; // Move north (up)

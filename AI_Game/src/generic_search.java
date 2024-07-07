@@ -3,15 +3,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 public class generic_search {
 	public static int row = 1;
 	public static int column = 1;
 	public static int[][] grid = new int[1][1];
-	public static ArrayList<Integer> organisms_id;
+	public static ArrayList<Integer> organisms_id = new ArrayList<>();
 
 	static List<int[]> reconstructPath(Node node) {
 		List<int[]> path = new ArrayList<>();
@@ -42,21 +44,10 @@ public class generic_search {
 		return mappedPath;
 	}
 
-	public static boolean goalTest(Map<Integer, int[]> coordinatesMap) {
-		int[] firstCoordinates = null;
-		for (Map.Entry<Integer, int[]> entry : coordinatesMap.entrySet()) {
-			if (entry.getKey() > 0) { // Only consider microorganisms
-				if (firstCoordinates == null) {
-					firstCoordinates = entry.getValue();
-				} else {
-					int[] currentCoordinates = entry.getValue();
-					if (firstCoordinates[0] != currentCoordinates[0] || firstCoordinates[1] != currentCoordinates[1]) {
-						return false;
-					}
-				}
-			}
-		}
-		return true;
+	public static boolean goalTest(Node n) {
+		if (n.organisms_id.size() == 1)
+			return true;
+		return false;
 	}
 
 	public static boolean obstacleCheck(int[] organismCoordinates, Map<Integer, int[]> coordinatesMap) {
@@ -82,7 +73,7 @@ public class generic_search {
 
 	}
 
-	public static String search(int[][] gridG, String strategy, boolean visualize) {
+	public static List<String> search(int[][] gridG, String strategy, boolean visualize) {
 		grid = gridG;
 		row = grid.length;
 		column = grid[0].length;
@@ -90,19 +81,19 @@ public class generic_search {
 		printCoordinatesMap(coordinatesMap);
 		switch (strategy) {
 		case "BF":
-			// return breadthFirstSearch(coordinatesMap);
+			return PathMapper(reconstructPath(breadthFirstSearch(coordinatesMap)));
 		case "DF":
-			return depthFirstSearch();
+			// return depthFirstSearch();
 		case "ID":
-			return iterativeDeepeningSearch();
+			// return iterativeDeepeningSearch();
 		case "GR1":
-			return greedySearch1();
+			// return greedySearch1();
 		case "GR2":
-			return greedySearch2();
+			// return greedySearch2();
 		case "AS1":
-			return aStarSearch1();
+			// return aStarSearch1();
 		case "AS2":
-			return aStarSearch2();
+			// return aStarSearch2();
 		default:
 			throw new IllegalArgumentException("Unknown strategy: " + strategy);
 		}
@@ -134,43 +125,58 @@ public class generic_search {
 
 	public static List<Node> expand(Node node) {
 		List<Node> children = new ArrayList<>();
-		int num_organisms_sofar = node.organisms_id.size();
-		for (int i = 0; i < num_organisms_sofar; i++) {
+		// Create a copy of organisms_id to iterate over
+		List<Integer> organismsCopy = new ArrayList<>(node.organisms_id);
+
+		for (int i = 0; i < organismsCopy.size(); i++) {
 			for (int j = 1; j <= 4; j++) {
-				int[] new_coordinate = node.move(node.grid.get(i), j);
+				System.out.print("hi" + node.grid);
+				System.out.print("organisms" + node.organisms_id);
+				System.out.print("i" + i);
+				int[] new_coordinate = node.move(node.grid.get(organismsCopy.get(i)), j);
 				if (!(boundaryCheck(new_coordinate) || obstacleCheck(new_coordinate, node.grid))) {
-					int[] action = new int[] { i, j };
+					int[] action = new int[] { organismsCopy.get(i), j };
 					Node child = new Node(node.grid, node, action, node.organisms_id, node.cost);
 					child.updateGrid();
 					children.add(child);
 				}
-
 			}
-
 		}
-
 		return children;
-
 	}
 
-	private static Node breadthFirstSearch(Map<Integer, int[]> gridIntital) {
-		Node root = new Node(gridIntital, null, null, organisms_id, 0);
-		if (goalTest(root.grid)) {
+	private static Node breadthFirstSearch(Map<Integer, int[]> gridInitial) {
+		Node root = new Node(gridInitial, null, null, organisms_id, 0);
+		if (goalTest(root)) {
 			return root;
 		}
 		Deque<Node> queue = new ArrayDeque<>();
+		Set<Map<Integer, int[]>> visited = new HashSet<>();
 		queue.add(root);
+		visited.add(deepCopyGrid(root.grid)); // Assuming a method to deep copy the grid map
+
 		while (!queue.isEmpty()) {
 			Node node = queue.poll();
-			if (goalTest(node.grid))
+			if (goalTest(node)) {
 				return node;
-			for (Node child : expand(node)) {
-				queue.add(child);
 			}
-
+			for (Node child : expand(node)) {
+				Map<Integer, int[]> childGridCopy = deepCopyGrid(child.grid);
+				if (!visited.contains(childGridCopy)) {
+					queue.add(child);
+					visited.add(childGridCopy);
+				}
+			}
 		}
 		return null;
+	}
 
+	private static Map<Integer, int[]> deepCopyGrid(Map<Integer, int[]> original) {
+		Map<Integer, int[]> copy = new HashMap<>();
+		for (Map.Entry<Integer, int[]> entry : original.entrySet()) {
+			copy.put(entry.getKey(), entry.getValue().clone());
+		}
+		return copy;
 	}
 
 	private static String depthFirstSearch() {

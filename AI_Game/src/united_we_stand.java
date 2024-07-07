@@ -1,5 +1,6 @@
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -7,15 +8,18 @@ public class united_we_stand extends generic_search {
 	public static void main(String[] args) {
 		int[][] grid = genGrid();
 		printGrid(grid);
-		System.out.print("");
+		List<String> path = generic_search.search(grid, "BF", false);
+		for (String s : path) {
+			System.out.print(s);
+		}
 
 	}
 
 	public static int[][] genGrid() {
-		int rows = 6; // Number of rows in the grid
-		int cols = 6; // Number of columns in the grid
-		int maxMicroOrganisms = 5; // Maximum number of microorganisms
-		int maxObstacles = 3; // Maximum number of obstacles
+		int rows = 3; // Number of rows in the grid
+		int cols = 3; // Number of columns in the grid
+		int maxMicroOrganisms = 2; // Maximum number of microorganisms
+		int maxObstacles = 0; // Maximum number of obstacles
 
 		int[][] grid = new int[rows][cols];
 		Random random = new Random();

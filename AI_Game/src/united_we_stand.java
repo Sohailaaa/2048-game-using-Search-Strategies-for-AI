@@ -3,7 +3,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class united_we_stand {
+public class united_we_stand extends generic_search{
     public static void main(String[] args) {
         int[][] grid = genGrid();
         printGrid(grid);

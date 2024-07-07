@@ -7,7 +7,7 @@ public class united_we_stand extends generic_search{
     public static void main(String[] args) {
         int[][] grid = genGrid();
         printGrid(grid);
-
+System.out.print("");
         Map<Integer, int[]> coordinatesMap = reshape(grid);
         printCoordinatesMap(coordinatesMap);
     }

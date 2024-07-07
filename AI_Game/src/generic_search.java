@@ -20,6 +20,19 @@ public class generic_search {
 		return true;
 	}
 
+	public static boolean obstacleCheck(int[] organismCoordinates, Map<Integer, int[]> coordinatesMap) {
+		for (Map.Entry<Integer, int[]> entry : coordinatesMap.entrySet()) {
+			if (entry.getKey() == -1) { // Only consider obstacles
+				int[] obstacleCoordinates = entry.getValue();
+				if (obstacleCoordinates[0] == organismCoordinates[0]
+						&& obstacleCoordinates[1] == organismCoordinates[1]) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public static String search(String strategy) {
 		switch (strategy) {
 		case "BF":

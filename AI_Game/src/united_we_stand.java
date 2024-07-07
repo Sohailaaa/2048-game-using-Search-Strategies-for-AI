@@ -8,7 +8,6 @@ public class united_we_stand extends generic_search {
 		int[][] grid = genGrid();
 		printGrid(grid);
 		System.out.print("");
-		
 
 	}
 
@@ -46,8 +45,6 @@ public class united_we_stand extends generic_search {
 		return grid;
 	}
 
-
-
 	public static void printGrid(int[][] grid) {
 		for (int[] row : grid) {
 			for (int cell : row) {
@@ -57,5 +54,4 @@ public class united_we_stand extends generic_search {
 		}
 	}
 
-	
 }

@@ -1,4 +1,7 @@
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -7,23 +10,33 @@ public class generic_search {
 	public static int column = 1;
 	public static int[][] grid = new int[1][1];
 
-	public static int[] move(int[] coordinates, char direction) {
-		int[] newCoordinates = coordinates.clone();
-		switch (direction) {
-		case 'N':
-			newCoordinates[0]--; // Move north (up)
-			break;
-		case 'S':
-			newCoordinates[0]++; // Move south (down)
-			break;
-		case 'E':
-			newCoordinates[1]++; // Move east (right)
-			break;
-		case 'W':
-			newCoordinates[1]--; // Move west (left)
-			break;
+	static List<int[]> reconstructPath(Node node) {
+		List<int[]> path = new ArrayList<>();
+		while (node != null) {
+			path.add(node.action);
+			node = node.parent;
 		}
-		return newCoordinates;
+		Collections.reverse(path);
+		return path;
+	}
+
+	static List<String> PathMapper(List<int[]> path) {
+		String[] directionMapping = { "North", "South", "East", "West" };
+
+		List<String> mappedPath = new ArrayList<>();
+
+		for (int[] point : path) {
+			int row = point[0];
+			int col = point[1];
+
+			String organism = "Organism_" + (row);
+			String direction = directionMapping[col - 1]; // Assuming col corresponds to direction index
+
+			mappedPath.add(organism);
+			mappedPath.add(direction);
+		}
+
+		return mappedPath;
 	}
 
 	public static boolean goalTest(Map<Integer, int[]> coordinatesMap) {

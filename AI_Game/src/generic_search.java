@@ -1,5 +1,7 @@
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +11,7 @@ public class generic_search {
 	public static int row = 1;
 	public static int column = 1;
 	public static int[][] grid = new int[1][1];
+	public static ArrayList<Integer> organisms_id;
 
 	static List<int[]> reconstructPath(Node node) {
 		List<int[]> path = new ArrayList<>();
@@ -71,13 +74,13 @@ public class generic_search {
 
 	public static String search(int[][] gridG, String strategy, boolean visualize) {
 		grid = gridG;
-		row = grid.length - 1;
-		column = grid[0].length - 1;
+		row = grid.length;
+		column = grid[0].length;
 		Map<Integer, int[]> coordinatesMap = reshape(grid);
 		printCoordinatesMap(coordinatesMap);
 		switch (strategy) {
 		case "BF":
-			return breadthFirstSearch();
+			// return breadthFirstSearch(coordinatesMap);
 		case "DF":
 			return depthFirstSearch();
 		case "ID":
@@ -102,6 +105,8 @@ public class generic_search {
 			for (int j = 0; j < grid[i].length; j++) {
 				if (grid[i][j] != 0) {
 					coordinatesMap.put(grid[i][j], new int[] { i, j });
+					if (grid[i][j] != -1)
+						organisms_id.add(grid[i][j]);
 				}
 			}
 		}
@@ -117,8 +122,19 @@ public class generic_search {
 		}
 	}
 
-	private static String breadthFirstSearch() {
-		return "Breadth-First Search result";
+	private static Node breadthFirstSearch(Map<Integer, int[]> gridIntital) {
+		Node root = new Node(gridIntital, null, null, organisms_id, 0);
+		if (goalTest(root.grid)) {
+			return root;
+		}
+		Deque<Node> queue = new ArrayDeque<>();
+		queue.add(root);
+		while (!queue.isEmpty()) {
+			Node node = queue.poll();
+
+		}
+		return null;
+
 	}
 
 	private static String depthFirstSearch() {

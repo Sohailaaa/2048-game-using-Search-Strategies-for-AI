@@ -72,6 +72,16 @@ public class generic_search {
 		return false;
 	}
 
+	public static boolean boundaryCheck(int[] coordinates) {
+		if (coordinates[0] < 0 || coordinates[0] > row - 1) // checks rows x
+			return true;
+		else if (coordinates[1] < 0 || coordinates[1] > column - 1) // checks columns y
+			return true;
+
+		return false;
+
+	}
+
 	public static String search(int[][] gridG, String strategy, boolean visualize) {
 		grid = gridG;
 		row = grid.length;
@@ -122,6 +132,27 @@ public class generic_search {
 		}
 	}
 
+	public static List<Node> expand(Node node) {
+		List<Node> children = new ArrayList<>();
+		int num_organisms_sofar = node.organisms_id.size();
+		for (int i = 0; i < num_organisms_sofar; i++) {
+			for (int j = 1; j <= 4; j++) {
+				int[] new_coordinate = node.move(node.grid.get(i), j);
+				if (!(boundaryCheck(new_coordinate) || obstacleCheck(new_coordinate, node.grid))) {
+					int[] action = new int[] { i, j };
+					Node child = new Node(node.grid, node, action, node.organisms_id, node.cost);
+					child.updateGrid();
+					children.add(child);
+				}
+
+			}
+
+		}
+
+		return children;
+
+	}
+
 	private static Node breadthFirstSearch(Map<Integer, int[]> gridIntital) {
 		Node root = new Node(gridIntital, null, null, organisms_id, 0);
 		if (goalTest(root.grid)) {
@@ -131,6 +162,11 @@ public class generic_search {
 		queue.add(root);
 		while (!queue.isEmpty()) {
 			Node node = queue.poll();
+			if (goalTest(node.grid))
+				return node;
+			for (Node child : expand(node)) {
+				queue.add(child);
+			}
 
 		}
 		return null;
@@ -159,16 +195,6 @@ public class generic_search {
 
 	private static String aStarSearch2() {
 		return "A* Search 2 result";
-	}
-
-	public static boolean boundaryCheck(int[] coordinates) {
-		if (coordinates[0] < 0 || coordinates[0] > row - 1) // checks rows x
-			return true;
-		else if (coordinates[1] < 0 || coordinates[1] > column - 1) // checks columns y
-			return true;
-
-		return false;
-
 	}
 
 	public static void main(String[] args) {

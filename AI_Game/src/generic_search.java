@@ -200,7 +200,7 @@ public class generic_search {
 
 					return child;
 				}
-//				if (checkAddState(child)) {
+			if (checkAddState(child)) {
 					reached.add(child);
 					queue.add(child);
 				//}

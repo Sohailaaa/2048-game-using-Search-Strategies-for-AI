@@ -1,1 +1,12 @@
 /.metadata/
+# Ignore compiled class files
+*.class
+
+# Ignore other Eclipse-specific files
+.classpath
+.project
+.settings/
+
+# Ignore build directories
+bin/
+target/

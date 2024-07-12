@@ -8,14 +8,14 @@ public class united_we_stand extends generic_search {
 	public static void main(String[] args) {
 //		 int[][] grid = genGrid();
 //		int[][] grid = new int[][] { { -1, -2, -3 }, { 1, 0, 0 }, { 0, 0, 2 } };
-		int[][] grid = stringToGrid("4;3;0,1,2,1,0,2;2,0,3,0,1,2,1,0,0,0,1,1;");
+		int[][] grid = stringToGrid("4;3;0,1,2,1,0,2;2,0,3,0,1,2,1,0,0,0;");
 //		int[][] grid = stringToGrid("4;3;0,1,2,1,0,2;2,0,3,0,1,2,1,0,0,0,1,1;");
 	//	int[][] grid = stringToGrid("9;7;4,2,6,5,5,6,1,5,6,1,8,1,8,2,4,3,6,0,7,5;0,1,0,2,0,3,0,5,1,4,6,3,6,6,2,0,0,4,3,3,8,4,3,0,8,6,5,4,5,1,0,0,3,2,8,0,2,2,6,2,7,3,5,2,5,3,2,7,4,6,0,6,1,6,1,2,1,3,8,3;");
 //		int[][] grid = stringToGrid("4;3;0,1,2,1,0,2;2,0,3,0,1,2,1,0,0,0;");
 		
 		
 		printGrid(grid);
-		List<String> path = generic_search.search(grid, "BF", false);
+		List<String> path = generic_search.search(grid, "DF", false);
 	for (String s : path) {
 			System.out.print(s);
 		}

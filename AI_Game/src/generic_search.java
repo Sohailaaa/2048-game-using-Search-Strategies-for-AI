@@ -69,9 +69,9 @@ public class generic_search {
 		// printCoordinatesMap(coordinatesMap);
 		switch (strategy) {
 		case "BF":
-			return PathMapper(reconstructPath(breadthFirstSearch(coordinatesMap)));
+			return PathMapper(reconstructPath(breadthFirstSearch(coordinatesMap, 1)));
 		case "DF":
-			// return depthFirstSearch();
+			return PathMapper(reconstructPath(breadthFirstSearch(coordinatesMap, 2)));
 		case "ID":
 			// return iterativeDeepeningSearch();
 		case "GR1":
@@ -174,7 +174,7 @@ public class generic_search {
 		return children;
 	}
 
-	private static Node breadthFirstSearch(Map<Integer, int[]> gridInitial) {
+	private static Node breadthFirstSearch(Map<Integer, int[]> gridInitial, int BfORDF) {
 		System.out.println(organismList + "orgList");
 
 		Node root = new Node(gridInitial, null, null, organismList, 0);
@@ -186,7 +186,12 @@ public class generic_search {
 		queue.add(root);
 		reached.add(root);
 		while (!queue.isEmpty()) {
-			Node node = queue.poll();
+			Node node;
+			if (BfORDF == 1) {
+				node = queue.poll();
+			} else {
+				node = queue.removeLast();
+			}
 
 			for (Node child : expand(node)) {
 				if (goalTest(child)) {
@@ -195,10 +200,10 @@ public class generic_search {
 
 					return child;
 				}
-				if (checkAddState(child)) {
+//				if (checkAddState(child)) {
 					reached.add(child);
 					queue.add(child);
-				}
+				//}
 
 			}
 		}

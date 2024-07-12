@@ -1,9 +1,7 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
-public class Node {
+import java.util.*;
+
+public class Node implements Comparable<Node> {
 
 	Map<Integer, int[]> grid;
 	ArrayList<Organism> organismList;
@@ -46,6 +44,31 @@ public class Node {
 		return copy;
 	}
 
+	@Override
+	public int compareTo(Node other) {
+		if (this.grid.equals(other.grid)) {
+			return Integer.compare(this.cost, other.cost);
+		}
+		return 0;
+	}
+
+	// Optionally, you might want to override equals and hashCode as well
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		Node node = (Node) obj;
+		return cost == node.cost && grid.equals(node.grid);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(grid, cost);
+	}
 	//////////
 
 	public int organismCheck(int org_id, int[] new_coordinates, Map<Integer, int[]> coordinatesMap) {
@@ -81,7 +104,7 @@ public class Node {
 		return false;
 
 	}
-	
+
 	public void move(int[] coordinates, int[] action) {
 
 		int currentRow = coordinates[0];
@@ -113,21 +136,21 @@ public class Node {
 						break;
 					}
 				}
-				
+
 				int cellMovement = Math.abs(coordinates[0] - currentRow) + Math.abs(coordinates[1] - currentCol);
 				cost += cellMovement * organismCount;
 
 				grid.put(action[0], new int[] { currentRow, currentCol });
-				
-				System.out.println("Organism " + action[0] + " Has Collided with Obstacle after moving in direction " + action[1]);
+
+				System.out.println(
+						"Organism " + action[0] + " Has Collided with Obstacle after moving in direction " + action[1]);
 				break;
 			}
 
 			// Check if hit an organism
 			int result = organismCheck(action[0], nextCoordinates, grid);
 			if (result != -1) {
-				
-				
+
 				int removedOrganismIndex = -1;
 				int removedSize = -1;
 				for (int i = 0; i < organismList.size(); i++) {
@@ -141,7 +164,6 @@ public class Node {
 				organismList.remove(removedOrganismIndex);
 				grid.remove(result);
 
-				
 				int organismCount = 0;
 				for (Organism o : organismList) {
 					if (o.id == action[0]) {
@@ -152,15 +174,13 @@ public class Node {
 						break;
 					}
 				}
-				
-				
-				
+
 				int cellMovement = Math.abs(coordinates[0] - nextRow) + Math.abs(coordinates[1] - nextCol);
 				cost += cellMovement * organismCount;
-				
-				
-				System.out.println("Organism " + action[0] + " has collided with organism " + result + 
-						" Organism " + action[0] + " will now remain at " + nextCoordinates[0] + ", " + nextCoordinates[1] + " and has gained " + removedSize + " organisms");
+
+				System.out.println("Organism " + action[0] + " has collided with organism " + result + " Organism "
+						+ action[0] + " will now remain at " + nextCoordinates[0] + ", " + nextCoordinates[1]
+						+ " and has gained " + removedSize + " organisms");
 
 				grid.put(action[0], nextCoordinates);
 				break;

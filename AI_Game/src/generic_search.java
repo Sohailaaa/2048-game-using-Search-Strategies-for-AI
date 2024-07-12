@@ -14,6 +14,7 @@ public class generic_search {
 	public static int column;
 	public static int[][] grid;
 	public static ArrayList<Organism> organismList;
+	public static ArrayList<Node> reached = new ArrayList<>();
 
 	static List<int[]> reconstructPath(Node node) {
 		List<int[]> path = new ArrayList<>();
@@ -59,9 +60,6 @@ public class generic_search {
 			return true;
 		return false;
 	}
-	
-	
-
 
 	public static List<String> search(int[][] gridG, String strategy, boolean visualize) {
 		row = gridG.length;
@@ -102,7 +100,7 @@ public class generic_search {
 
 				}
 				if (grid[i][j] > 0) {
-					Organism org = new Organism(grid[i][j],1,i,j);
+					Organism org = new Organism(grid[i][j], 1, i, j);
 					organismList.add(org);
 
 				}
@@ -144,6 +142,15 @@ public class generic_search {
 		return clone;
 	}
 
+	public static boolean checkAddState(Node n) {
+		for (Node pastNode : reached) {
+			if (n.compareTo(pastNode) < 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public static List<Node> expand(Node node) {
 		List<Node> children = new ArrayList<>();
 		ArrayList<Organism> organismsCopy = organismListClone(node.organismList);
@@ -177,22 +184,26 @@ public class generic_search {
 		}
 		Deque<Node> queue = new ArrayDeque<>();
 		queue.add(root);
-
+		reached.add(root);
 		while (!queue.isEmpty()) {
 			Node node = queue.poll();
 
 			for (Node child : expand(node)) {
 				if (goalTest(child)) {
-					System.out.print(
-							child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size + "  " + child.grid + "  with cost: " + child.cost);
+					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
+							+ "  " + child.grid + "  with cost: " + child.cost);
 
 					return child;
 				}
-				queue.add(child);
+				if (checkAddState(child)) {
+					reached.add(child);
+					queue.add(child);
+				}
 
 			}
 		}
-		System.out.print("noooo");
+
+		System.out.print("no Solution");
 		return null;
 	}
 

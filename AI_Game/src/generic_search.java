@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -14,7 +15,7 @@ public class generic_search {
 	public static int column;
 	public static int[][] grid;
 	public static ArrayList<Organism> organismList;
-	public static ArrayList<Node> reached = new ArrayList<>();
+	public static HashMap<Integer, Integer> visited;
 
 	static List<int[]> reconstructPath(Node node) {
 		List<int[]> path = new ArrayList<>();
@@ -25,17 +26,13 @@ public class generic_search {
 			node = node.parent;
 		}
 		Collections.reverse(path);
-		for (int[] p : path) {
-			System.out.print("recons" + p[0] + "." + p[1]);
-		}
+
 		return path;
 	}
 
 	static List<String> PathMapper(List<int[]> path) {
 //		System.out.println("path"+path.iter);
-		for (int[] p : path) {
-			System.out.print("recons" + p[0] + "." + p[1]);
-		}
+
 		String[] directionMapping = { "North", "South", "East", "West" };
 
 		List<String> mappedPath = new ArrayList<>();
@@ -47,9 +44,9 @@ public class generic_search {
 
 			String organism = "Organism_" + (row);
 			String direction = directionMapping[col - 1]; // Assuming col corresponds to direction index
-			String state = "" + organism + "_" + direction + ",";
-			mappedPath.add(organism);
-			mappedPath.add(direction);
+			String state = " " + organism + "_" + direction + ", ";
+			mappedPath.add(state);
+
 		}
 
 		return mappedPath;
@@ -66,6 +63,7 @@ public class generic_search {
 		column = gridG[0].length;
 		organismList = new ArrayList<>();
 		Map<Integer, int[]> coordinatesMap = reshape(gridG);
+		visited = new HashMap<>();
 		// printCoordinatesMap(coordinatesMap);
 		switch (strategy) {
 		case "BF":
@@ -73,7 +71,7 @@ public class generic_search {
 		case "DF":
 			return PathMapper(reconstructPath(breadthFirstSearch(coordinatesMap, 2)));
 		case "ID":
-			// return iterativeDeepeningSearch();
+			return PathMapper(reconstructPath(iterativeDeepeningSearch(coordinatesMap, 20)));
 		case "GR1":
 			// return greedySearch1();
 		case "GR2":
@@ -143,11 +141,15 @@ public class generic_search {
 	}
 
 	public static boolean checkAddState(Node n) {
-		for (Node pastNode : reached) {
-			if (n.compareTo(pastNode) < 0) {
-				return true;
-			}
+		Integer hValue = n.hashCode();
+		if (!visited.containsKey(hValue)) {
+			visited.put(hValue, n.cost);
+			return true;
 		}
+//		if (n.cost < visited.get(hValue)) {
+//			visited.put(hValue, n.cost);
+//			return true;
+//		}
 		return false;
 	}
 
@@ -184,13 +186,13 @@ public class generic_search {
 		}
 		Deque<Node> queue = new ArrayDeque<>();
 		queue.add(root);
-		reached.add(root);
+		checkAddState(root);
 		while (!queue.isEmpty()) {
 			Node node;
 			if (BfORDF == 1) {
 				node = queue.poll();
 			} else {
-				node = queue.removeLast();
+				node = queue.pollLast();
 			}
 
 			for (Node child : expand(node)) {
@@ -200,15 +202,55 @@ public class generic_search {
 
 					return child;
 				}
-			if (checkAddState(child)) {
-					reached.add(child);
+				if (!child.isDead && checkAddState(child)) {
 					queue.add(child);
-				//}
 
+				}
+			}
+
+		}
+
+		System.out.print("no Solution");
+		return null;
+	}
+
+	private static Node iterativeDeepeningSearch(Map<Integer, int[]> gridInitial, int maxDepth) {
+		System.out.println(organismList + "orgList");
+
+		for (int depth = 1; depth <= maxDepth; depth++) {
+			Node result = depthLimitedSearch(new Node(gridInitial, null, null, organismList, 0), depth);
+			if (result != null) {
+				return result;
 			}
 		}
 
 		System.out.print("no Solution");
+		return null;
+	}
+
+	private static Node depthLimitedSearch(Node node, int limit) {
+		visited.clear();
+		checkAddState(node);
+		return depthLimitedSearchHelper(node, limit, 0);
+	}
+
+	private static Node depthLimitedSearchHelper(Node node, int limit, int depth) {
+		if (goalTest(node)) {
+			return node;
+		}
+		if (depth == limit) {
+			return null;
+		}
+
+		for (Node child : expand(node)) {
+			if (!child.isDead && checkAddState(child)) {
+				Node result = depthLimitedSearchHelper(child, limit, depth + 1);
+				if (result != null) {
+					return result;
+				}
+			}
+		}
+
 		return null;
 	}
 
@@ -220,31 +262,4 @@ public class generic_search {
 		return copy;
 	}
 
-	private static String depthFirstSearch() {
-		return "Depth-First Search result";
-	}
-
-	private static String iterativeDeepeningSearch() {
-		return "Iterative Deepening Search result";
-	}
-
-	private static String greedySearch1() {
-		return "Greedy Search 1 result";
-	}
-
-	private static String greedySearch2() {
-		return "Greedy Search 2 result";
-	}
-
-	private static String aStarSearch1() {
-		return "A* Search 1 result";
-	}
-
-	private static String aStarSearch2() {
-		return "A* Search 2 result";
-	}
-
-	public static void main(String[] args) {
-
-	}
 }

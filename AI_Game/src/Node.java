@@ -46,13 +46,12 @@ public class Node implements Comparable<Node> {
 
 	@Override
 	public int compareTo(Node other) {
-		if (this.grid.equals(other.grid)) {
+		if (this.gridEquals(other.grid)) {
 			return Integer.compare(this.cost, other.cost);
 		}
 		return 0;
 	}
 
-	// Optionally, you might want to override equals and hashCode as well
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -62,13 +61,31 @@ public class Node implements Comparable<Node> {
 			return false;
 		}
 		Node node = (Node) obj;
-		return cost == node.cost && grid.equals(node.grid);
+		return cost == node.cost && gridEquals(node.grid);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(grid, cost);
+		return Objects.hash(gridHash(this.grid));
 	}
+
+	public boolean gridEquals(Map<Integer, int[]> otherGrid) {
+		if (gridHash(this.grid) == gridHash(otherGrid)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private int gridHash(Map<Integer, int[]> grid) {
+		int result = 1;
+		for (Map.Entry<Integer, int[]> entry : grid.entrySet()) {
+			result = 31 * result + entry.getKey();
+			result = 31 * result + Arrays.hashCode(entry.getValue());
+		}
+		return result;
+	}
+
 	//////////
 
 	public int organismCheck(int org_id, int[] new_coordinates, Map<Integer, int[]> coordinatesMap) {
@@ -142,8 +159,8 @@ public class Node implements Comparable<Node> {
 
 				grid.put(action[0], new int[] { currentRow, currentCol });
 
-				System.out.println(
-						"Organism " + action[0] + " Has Collided with Obstacle after moving in direction " + action[1]);
+//				System.out.println(
+//						"Organism " + action[0] + " Has Collided with Obstacle after moving in direction " + action[1]);
 				break;
 			}
 
@@ -178,9 +195,9 @@ public class Node implements Comparable<Node> {
 				int cellMovement = Math.abs(coordinates[0] - nextRow) + Math.abs(coordinates[1] - nextCol);
 				cost += cellMovement * organismCount;
 
-				System.out.println("Organism " + action[0] + " has collided with organism " + result + " Organism "
-						+ action[0] + " will now remain at " + nextCoordinates[0] + ", " + nextCoordinates[1]
-						+ " and has gained " + removedSize + " organisms");
+//				System.out.println("Organism " + action[0] + " has collided with organism " + result + " Organism "
+//						+ action[0] + " will now remain at " + nextCoordinates[0] + ", " + nextCoordinates[1]
+//						+ " and has gained " + removedSize + " organisms");
 
 				grid.put(action[0], nextCoordinates);
 				break;

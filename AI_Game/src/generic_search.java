@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Set;
 
@@ -72,6 +73,9 @@ public class generic_search {
 			return PathMapper(reconstructPath(breadthFirstSearch(coordinatesMap, 2)));
 		case "ID":
 			return PathMapper(reconstructPath(iterativeDeepeningSearch(coordinatesMap, 20)));
+		case "UC":
+			return PathMapper(reconstructPath(uniformCostSearch(coordinatesMap)));
+
 		case "GR1":
 			// return greedySearch1();
 		case "GR2":
@@ -251,6 +255,38 @@ public class generic_search {
 			}
 		}
 
+		return null;
+	}
+
+	public static Node uniformCostSearch(Map<Integer, int[]> gridInitial) {
+		System.out.println(organismList + "orgList");
+
+		Node root = new Node(gridInitial, null, null, organismList, 0);
+		if (goalTest(root)) {
+			System.out.print("root");
+			return root;
+		}
+
+		PriorityQueue<Node> queue = new PriorityQueue<>();
+		queue.add(root);
+		checkAddState(root);
+
+		while (!queue.isEmpty()) {
+			Node node = queue.poll();
+
+			for (Node child : expand(node)) {
+				if (goalTest(child)) {
+					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
+							+ "  " + child.grid + "  with cost: " + child.cost);
+					return child;
+				}
+				if (!child.isDead && checkAddState(child)) {
+					queue.add(child);
+				}
+			}
+		}
+
+		System.out.print("no Solution");
 		return null;
 	}
 

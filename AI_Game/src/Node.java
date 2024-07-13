@@ -44,25 +44,12 @@ public class Node implements Comparable<Node> {
 		return copy;
 	}
 
-	@Override
-	public int compareTo(Node other) {
-		if (this.gridEquals(other.grid)) {
-			return Integer.compare(this.cost, other.cost);
-		}
-		return 0;
-	}
+	  @Override
+      public int compareTo(Node other) {
+          return Integer.compare(this.cost, other.cost);
+      }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null || getClass() != obj.getClass()) {
-			return false;
-		}
-		Node node = (Node) obj;
-		return cost == node.cost && gridEquals(node.grid);
-	}
+	
 
 	@Override
 	public int hashCode() {

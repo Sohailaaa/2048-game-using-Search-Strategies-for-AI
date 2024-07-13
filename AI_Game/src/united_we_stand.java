@@ -16,7 +16,7 @@ public class united_we_stand extends generic_search {
 //		int[][] grid = stringToGrid("4;3;0,1,2,1,0,2;2,0,3,0,1,2,1,0,0,0;");
 
 		printGrid(grid);
-		List<String> path = generic_search.search(grid, "ID", false);
+		List<String> path = generic_search.search(grid, "UC", false);
 		for (String s : path) {
 			System.out.print(s);
 		}

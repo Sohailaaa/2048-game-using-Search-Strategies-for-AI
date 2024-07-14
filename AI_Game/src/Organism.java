@@ -15,7 +15,7 @@ public class Organism {
 	public int getId() {
 		return id;
 	}
-	
+
 	public void updateSize(int newSize) {
 		this.size = newSize;
 	}

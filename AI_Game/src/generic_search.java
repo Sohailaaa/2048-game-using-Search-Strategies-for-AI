@@ -20,7 +20,7 @@ public class generic_search {
 	public static int totalCost;
 	public static int numOfNodesExpanded;
 
-	static List<int[]> reconstructPath(Node node) {
+	static List<int[]> reconstructPath2(Node node) {
 		List<int[]> path = new ArrayList<>();
 		while (node != null) {
 			if (node.action != null) {
@@ -33,26 +33,59 @@ public class generic_search {
 		return path;
 	}
 
-//	static List<int[]> reconstructPath2(Node node) {
-//		
-//		
-//		List<int[]> path = new ArrayList<>();
-//		while (node != null) {
-//			int [] action = node.action;
-//			int org_id=0;
-//			int row=0;
-//			if (action != null) {
-//				org_id=action[0];
-//				//node.organismList.get(org_id).row;
-//				path.add(node.action);
-//			}
-//			node = node.parent;
-//		}
-//		Collections.reverse(path);
-//
-//		return path;
-//	}
-	
+	static String reconstructPath(Node node) {
+		List<String> path = new ArrayList<>();
+		int row = 0;
+		int col = 0;
+		while (node != null) {
+			int[] action = node.action;
+			if (action != null) {
+				int org_id = action[0];
+				for (Organism o : node.organismList) {
+					if (o.id == org_id) {
+						row = o.row;
+						col = o.column;
+					}
+				}
+
+				String direction = directionMapper(action[1]);
+				String step = direction + "_" + row + "_" + col;
+				path.add(step);
+			}
+			node = node.parent;
+		}
+		Collections.reverse(path);
+
+		StringBuilder result = new StringBuilder();
+		for (String step : path) {
+			result.append(step).append(",");
+		}
+		// Remove the last comma and add a semicolon
+		if (result.length() > 0) {
+			result.setLength(result.length() - 1);
+			result.append(";");
+		}
+
+		result.append(totalCost).append(";").append(numOfNodesExpanded);
+
+		return result.toString();
+	}
+
+	public static String directionMapper(int direction) {
+		switch (direction) {
+		case 1:
+			return "NORTH";
+		case 2:
+			return "SOUTH";
+		case 3:
+			return "EAST";
+		case 4:
+			return "WEST";
+		default:
+			return "INVALID DIRECTION";
+		}
+	}
+
 	static List<String> PathMapper(List<int[]> path) {
 //		System.out.println("path"+path.iter);
 
@@ -81,7 +114,7 @@ public class generic_search {
 		return false;
 	}
 
-	public static List<String> search(String gridG, String strategy, boolean visualize) {
+	public static String search(String gridG, String strategy, boolean visualize) {
 
 		organismList = new ArrayList<>();
 		totalCost = 0;
@@ -92,22 +125,22 @@ public class generic_search {
 		// printCoordinatesMap(coordinatesMap);
 		switch (strategy) {
 		case "BF":
-			return PathMapper(reconstructPath(breadthFirstSearch(coordinatesMap, 1)));
+			return reconstructPath(breadthFirstSearch(coordinatesMap, 1));
 		case "DF":
-			return PathMapper(reconstructPath(breadthFirstSearch(coordinatesMap, 2)));
+			return (reconstructPath(breadthFirstSearch(coordinatesMap, 2)));
 		case "ID":
-			return PathMapper(reconstructPath(iterativeDeepeningSearch(coordinatesMap, 1000)));
+			return (reconstructPath(iterativeDeepeningSearch(coordinatesMap, 1000)));
 		case "UC":
-			return PathMapper(reconstructPath(uniformCostSearch(coordinatesMap)));
+			return (reconstructPath(uniformCostSearch(coordinatesMap)));
 
 		case "GR1":
-			return PathMapper(reconstructPath(GreedySearch_numOfOrgs(coordinatesMap)));
+			return (reconstructPath(GreedySearch_numOfOrgs(coordinatesMap)));
 		case "GR2":
-			return PathMapper(reconstructPath(GreedySearch_SumMinDistanceBetweenOrgs(coordinatesMap)));
+			return (reconstructPath(GreedySearch_SumMinDistanceBetweenOrgs(coordinatesMap)));
 		case "AS1":
-			return PathMapper(reconstructPath(AS_Search_numOfOrgs(coordinatesMap)));
+			return (reconstructPath(AS_Search_numOfOrgs(coordinatesMap)));
 		case "AS2":
-			return PathMapper(reconstructPath(AS_Search_SumMinDistanceBetweenOrgs(coordinatesMap)));
+			return (reconstructPath(AS_Search_SumMinDistanceBetweenOrgs(coordinatesMap)));
 
 		default:
 			throw new IllegalArgumentException("Unknown strategy: " + strategy);
@@ -240,8 +273,6 @@ public class generic_search {
 			for (Node child : expand(node)) {
 				if (goalTest(child)) {
 					totalCost = child.cost;
-					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
-							+ "  " + child.grid + "  with cost: " + child.cost);
 
 					return child;
 				}
@@ -320,8 +351,6 @@ public class generic_search {
 				if (goalTest(child)) {
 					totalCost = child.cost;
 
-					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
-							+ "  " + child.grid + "  with cost: " + child.cost);
 					return child;
 				}
 				if (!child.isDead && checkAddState(child)) {
@@ -358,8 +387,6 @@ public class generic_search {
 				if (goalTest(child)) {
 					totalCost = child.cost;
 
-					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
-							+ "  " + child.grid + "  with cost: " + child.cost);
 					return child;
 				}
 				if (!child.isDead && checkAddState(child)) {
@@ -396,8 +423,6 @@ public class generic_search {
 				if (goalTest(child)) {
 					totalCost = child.cost;
 
-					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
-							+ "  " + child.grid + "  with cost: " + child.cost);
 					return child;
 				}
 				if (!child.isDead && checkAddState(child)) {
@@ -435,8 +460,6 @@ public class generic_search {
 				if (goalTest(child)) {
 					totalCost = child.cost;
 
-					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
-							+ "  " + child.grid + "  with cost: " + child.cost);
 					return child;
 				}
 				if (!child.isDead && checkAddState(child)) {
@@ -474,8 +497,6 @@ public class generic_search {
 				if (goalTest(child)) {
 					totalCost = child.cost;
 
-					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
-							+ "  " + child.grid + "  with cost: " + child.cost);
 					return child;
 				}
 				if (!child.isDead && checkAddState(child)) {

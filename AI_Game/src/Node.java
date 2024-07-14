@@ -44,12 +44,10 @@ public class Node implements Comparable<Node> {
 		return copy;
 	}
 
-	  @Override
-      public int compareTo(Node other) {
-          return Integer.compare(this.cost, other.cost);
-      }
-
-	
+	@Override
+	public int compareTo(Node other) {
+		return Integer.compare(this.cost, other.cost);
+	}
 
 	@Override
 	public int hashCode() {
@@ -142,7 +140,7 @@ public class Node implements Comparable<Node> {
 				}
 
 				int cellMovement = Math.abs(coordinates[0] - currentRow) + Math.abs(coordinates[1] - currentCol);
-				cost += cellMovement * organismCount;
+				this.cost += cellMovement * organismCount;
 
 				grid.put(action[0], new int[] { currentRow, currentCol });
 
@@ -180,7 +178,7 @@ public class Node implements Comparable<Node> {
 				}
 
 				int cellMovement = Math.abs(coordinates[0] - nextRow) + Math.abs(coordinates[1] - nextCol);
-				cost += cellMovement * organismCount;
+				this.cost += cellMovement * organismCount;
 
 //				System.out.println("Organism " + action[0] + " has collided with organism " + result + " Organism "
 //						+ action[0] + " will now remain at " + nextCoordinates[0] + ", " + nextCoordinates[1]
@@ -194,82 +192,6 @@ public class Node implements Comparable<Node> {
 			currentCol = nextCol;
 		}
 
-//		
-//		
-//		
-//		int[] newCoordinates = new int[] { coordinates[0], coordinates[1] };
-//		int organismId = action[0];
-//		int direction = action[1];
-//		int noOfCombinedOrganism = 0;
-//		int moves = 0;
-//
-//		// Find the size of the organism
-//		for (Organism org : this.organismList) {
-//			if (org.getId() == organismId) {
-//				noOfCombinedOrganism = org.size;
-//				break;
-//			}
-//		}
-//
-//		while (true) {
-//			switch (direction) {
-//			case 1:
-//				newCoordinates[1]--; // Move north (up)
-//				break;
-//			case 2:
-//				newCoordinates[1]++; // Move south (down)
-//				break;
-//			case 3:
-//				newCoordinates[0]++; // Move east (right)
-//				break;
-//			case 4:
-//				newCoordinates[0]--; // Move west (left)
-//				break;
-//			default:
-//				return; // Invalid direction
-//			}
-//			
-//
-//			// Check if the new coordinates are within the boundary
-//			if (generic_search.boundaryCheck(newCoordinates)) {
-//				this.isDead = true;
-//				return;
-//			}
-//
-//			// Check if the new coordinates hit an obstacle
-//			else if (generic_search.obstacleCheck(newCoordinates, this.grid)) {
-//				System.out.println("Obstacle detected");
-//				// Undo the move
-//				switch (direction) {
-//				case 1:
-//					newCoordinates[1]++; // Undo move north (up)
-//					break;
-//				case 2:
-//					newCoordinates[1]--; // Undo move south (down)
-//					break;
-//				case 3:
-//					newCoordinates[0]--; // Undo move east (right)
-//					break;
-//				case 4:
-//					newCoordinates[0]++; // Undo move west (left)
-//					break;
-//				}
-//				break;
-//			}
-//
-//			// Check for collisions with other organisms
-//			else if (this.checkOrganismsCollision(organismId, newCoordinates)) {
-//				// Update the organism's position in the grid
-//				this.grid.replace(organismId, newCoordinates);
-//				moves++;
-//				break;
-//			}
-//
-//			moves++;
-//		}
-//
-//		// Calculate the cost
-//		this.cost = moves * noOfCombinedOrganism;
 	}
 
 }

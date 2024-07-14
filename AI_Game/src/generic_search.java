@@ -17,6 +17,8 @@ public class generic_search {
 	public static int[][] grid;
 	public static ArrayList<Organism> organismList;
 	public static HashMap<Integer, Integer> visited;
+	public static int totalCost;
+	public static int numOfNodesExpanded;
 
 	static List<int[]> reconstructPath(Node node) {
 		List<int[]> path = new ArrayList<>();
@@ -31,6 +33,26 @@ public class generic_search {
 		return path;
 	}
 
+//	static List<int[]> reconstructPath2(Node node) {
+//		
+//		
+//		List<int[]> path = new ArrayList<>();
+//		while (node != null) {
+//			int [] action = node.action;
+//			int org_id=0;
+//			int row=0;
+//			if (action != null) {
+//				org_id=action[0];
+//				//node.organismList.get(org_id).row;
+//				path.add(node.action);
+//			}
+//			node = node.parent;
+//		}
+//		Collections.reverse(path);
+//
+//		return path;
+//	}
+	
 	static List<String> PathMapper(List<int[]> path) {
 //		System.out.println("path"+path.iter);
 
@@ -59,11 +81,13 @@ public class generic_search {
 		return false;
 	}
 
-	public static List<String> search(int[][] gridG, String strategy, boolean visualize) {
-		row = gridG.length;
-		column = gridG[0].length;
+	public static List<String> search(String gridG, String strategy, boolean visualize) {
+
 		organismList = new ArrayList<>();
-		Map<Integer, int[]> coordinatesMap = reshape(gridG);
+		totalCost = 0;
+		numOfNodesExpanded = 0;
+
+		Map<Integer, int[]> coordinatesMap = reshape(united_we_stand.stringToGrid(gridG));
 		visited = new HashMap<>();
 		// printCoordinatesMap(coordinatesMap);
 		switch (strategy) {
@@ -72,7 +96,7 @@ public class generic_search {
 		case "DF":
 			return PathMapper(reconstructPath(breadthFirstSearch(coordinatesMap, 2)));
 		case "ID":
-			return PathMapper(reconstructPath(iterativeDeepeningSearch(coordinatesMap, 20)));
+			return PathMapper(reconstructPath(iterativeDeepeningSearch(coordinatesMap, 1000)));
 		case "UC":
 			return PathMapper(reconstructPath(uniformCostSearch(coordinatesMap)));
 
@@ -90,9 +114,20 @@ public class generic_search {
 		}
 	}
 
+	public static void printGrid(int[][] grid) {
+		for (int[] row : grid) {
+			for (int cell : row) {
+				System.out.print(cell + " ");
+			}
+			System.out.println();
+		}
+	}
+
 	// Transforms grid from 2D array of integers, into a map of
 	// integers with their corresponding coordinates.
 	public static Map<Integer, int[]> reshape(int[][] grid) {
+		printGrid(grid);
+
 		Map<Integer, int[]> coordinatesMap = new HashMap<>();
 
 		for (int i = 0; i < grid.length; i++) {
@@ -151,10 +186,10 @@ public class generic_search {
 			visited.put(hValue, n.cost);
 			return true;
 		}
-//		if (n.cost < visited.get(hValue)) {
-//			visited.put(hValue, n.cost);
-//			return true;
-//		}
+		if (n.cost < visited.get(hValue)) {
+			visited.put(hValue, n.cost);
+			return true;
+		}
 		return false;
 	}
 
@@ -186,6 +221,7 @@ public class generic_search {
 
 		Node root = new Node(gridInitial, null, null, organismList, 0);
 		if (goalTest(root)) {
+			totalCost = root.cost;
 			System.out.print("root");
 			return root;
 		}
@@ -195,13 +231,15 @@ public class generic_search {
 		while (!queue.isEmpty()) {
 			Node node;
 			if (BfORDF == 1) {
+
 				node = queue.poll();
 			} else {
 				node = queue.pollLast();
 			}
-
+			numOfNodesExpanded++;
 			for (Node child : expand(node)) {
 				if (goalTest(child)) {
+					totalCost = child.cost;
 					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
 							+ "  " + child.grid + "  with cost: " + child.cost);
 
@@ -241,6 +279,7 @@ public class generic_search {
 
 	private static Node depthLimitedSearchHelper(Node node, int limit, int depth) {
 		if (goalTest(node)) {
+			totalCost = node.cost;
 			return node;
 		}
 		if (depth == limit) {
@@ -249,6 +288,7 @@ public class generic_search {
 
 		for (Node child : expand(node)) {
 			if (!child.isDead && checkAddState(child)) {
+				numOfNodesExpanded++;
 				Node result = depthLimitedSearchHelper(child, limit, depth + 1);
 				if (result != null) {
 					return result;
@@ -264,7 +304,8 @@ public class generic_search {
 
 		Node root = new Node(gridInitial, null, null, organismList, 0);
 		if (goalTest(root)) {
-			System.out.print("root");
+			totalCost = root.cost;
+
 			return root;
 		}
 
@@ -274,9 +315,11 @@ public class generic_search {
 
 		while (!queue.isEmpty()) {
 			Node node = queue.poll();
-
+			numOfNodesExpanded++;
 			for (Node child : expand(node)) {
 				if (goalTest(child)) {
+					totalCost = child.cost;
+
 					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
 							+ "  " + child.grid + "  with cost: " + child.cost);
 					return child;
@@ -296,6 +339,8 @@ public class generic_search {
 
 		Node root = new Node(coordinatesMap, null, null, organismList, 0);
 		if (goalTest(root)) {
+			totalCost = root.cost;
+
 			System.out.print("root");
 			return root;
 		}
@@ -308,9 +353,11 @@ public class generic_search {
 
 		while (!queue.isEmpty()) {
 			Node node = queue.poll();
-
+			numOfNodesExpanded++;
 			for (Node child : expand(node)) {
 				if (goalTest(child)) {
+					totalCost = child.cost;
+
 					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
 							+ "  " + child.grid + "  with cost: " + child.cost);
 					return child;
@@ -330,6 +377,8 @@ public class generic_search {
 
 		Node root = new Node(coordinatesMap, null, null, organismList, 0);
 		if (goalTest(root)) {
+			totalCost = root.cost;
+
 			System.out.print("root");
 			return root;
 		}
@@ -342,9 +391,11 @@ public class generic_search {
 
 		while (!queue.isEmpty()) {
 			Node node = queue.poll();
-
+			numOfNodesExpanded++;
 			for (Node child : expand(node)) {
 				if (goalTest(child)) {
+					totalCost = child.cost;
+
 					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
 							+ "  " + child.grid + "  with cost: " + child.cost);
 					return child;
@@ -365,6 +416,8 @@ public class generic_search {
 
 		Node root = new Node(coordinatesMap, null, null, organismList, 0);
 		if (goalTest(root)) {
+			totalCost = root.cost;
+
 			System.out.print("root");
 			return root;
 		}
@@ -377,9 +430,11 @@ public class generic_search {
 
 		while (!queue.isEmpty()) {
 			Node node = queue.poll();
-
+			numOfNodesExpanded++;
 			for (Node child : expand(node)) {
 				if (goalTest(child)) {
+					totalCost = child.cost;
+
 					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
 							+ "  " + child.grid + "  with cost: " + child.cost);
 					return child;
@@ -400,6 +455,8 @@ public class generic_search {
 
 		Node root = new Node(coordinatesMap, null, null, organismList, 0);
 		if (goalTest(root)) {
+			totalCost = root.cost;
+
 			System.out.print("root");
 			return root;
 		}
@@ -412,9 +469,11 @@ public class generic_search {
 
 		while (!queue.isEmpty()) {
 			Node node = queue.poll();
-
+			numOfNodesExpanded++;
 			for (Node child : expand(node)) {
 				if (goalTest(child)) {
+					totalCost = child.cost;
+
 					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
 							+ "  " + child.grid + "  with cost: " + child.cost);
 					return child;
@@ -430,7 +489,7 @@ public class generic_search {
 	}
 
 	private static int heuristic(ArrayList<Organism> organismList) {
-		int heuristicValue = 0;
+		PriorityQueue<Integer> minDistances = new PriorityQueue<>();
 		for (int i = 0; i < organismList.size(); i++) {
 			int minDistance = Integer.MAX_VALUE;
 			for (int j = i + 1; j < organismList.size(); j++) {
@@ -439,11 +498,17 @@ public class generic_search {
 					minDistance = Math.min(minDistance, dist);
 				}
 			}
-			if (i < organismList.size() - 1) {
-				heuristicValue += minDistance;
+			if (minDistance != Integer.MAX_VALUE) {
+				minDistances.add(minDistance);
 			}
+
 		}
-		return heuristicValue;
+
+		int sum = 0;
+		while (minDistances.size() > 1) {
+			sum += minDistances.poll();
+		}
+		return sum;
 	}
 
 	private static int ManhattanDistance(Organism o1, Organism o2) {

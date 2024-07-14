@@ -7,18 +7,19 @@ import java.util.Random;
 public class united_we_stand extends generic_search {
 	public static void main(String[] args) {
 //		 int[][] grid = genGrid();
-//		int[][] grid = new int[][] { { -1, -2, -3 }, { 1, 0, 0 }, { 0, 0, 2 } };
-		int[][] grid = stringToGrid(
-				"8;6;2,1,4,3,4,2,2,0,4,4,5,2,2,3,2,4,5,5,4,5,2,2;6,4,6,2,7,5,7,2,6,3,3,0,3,5,7,0,3,1,3,3,5,1;");
-//int[][] grid = stringToGrid("4;3;0,1,2,1,0,2;2,0,3,0,1,2,1,0,0,0;");
-		// int[][] grid =
-		// stringToGrid("9;7;4,2,6,5,5,6,1,5,6,1,8,1,8,2,4,3,6,0,7,5;0,1,0,2,0,3,0,5,1,4,6,3,6,6,2,0,0,4,3,3,8,4,3,0,8,6,5,4,5,1,0,0,3,2,8,0,2,2,6,2,7,3,5,2,5,3,2,7,4,6,0,6,1,6,1,2,1,3,8,3;");
-//		int[][] grid = stringToGrid("4;3;0,1,2,1,0,2;2,0,3,0,1,2,1,0,0,0;");
+		// String grid = "4;3;0,1,2,1,0,2;2,0,3,0,1,2,1,0,0,0;";
+		// String grid = "4;3;0,1,2,1,0,2;2,0,3,0,1,2,1,0,0,0,1,1;";
+		//95 Gr1,15s// 101 Gr2 //55 As1//55 As2
+		String grid = "9;7;4,2,6,5,5,6,1,5,6,1,8,1,8,2,4,3,6,0,7,5;0,1,0,2,0,3,0,5,1,4,6,3,6,6,2,0,0,4,3,3,8,4,3,0,8,6,5,4,5,1,0,0,3,2,8,0,2,2,6,2,7,3,5,2,5,3,2,6,4,6,0,6,1,6,1,2,1,3,8,3;";
+		
+		// Gr1 //  Gr2 // As1// As2
+ //96//   String grid = "8;6;2,1,4,3,4,2,2,0,4,4,5,2,2,3,2,4,5,5,4,5,2,2;6,4,6,2,7,5,7,2,6,3,3,0,3,5,7,0,3,1,3,3,5,1;";
+		// String grid = "6;6;2,1,2,0;0,5,0,2,3,0,3,5,0,0,3,1,3,3,5,1;";
 
-		printGrid(grid);
-		List<String> path = generic_search.search(grid, "UC", false);
+		List<String> path = generic_search.search(grid, "AS2", false);
+		System.out.println("#" + totalCost + "totalcost");
 		for (String s : path) {
-			System.out.print(s);
+			System.out.println(s);
 		}
 
 	}
@@ -30,9 +31,9 @@ public class united_we_stand extends generic_search {
 	public static int[][] stringToGrid(String string) {
 		String[] dividedString = string.split(";");
 
-		int rows = Integer.parseInt(dividedString[1]);
-		int cols = Integer.parseInt(dividedString[0]);
-		int[][] grid = new int[rows][cols];
+		row = Integer.parseInt(dividedString[1]);
+		column = Integer.parseInt(dividedString[0]);
+		int[][] grid = new int[row][column];
 
 		String[] organisms = dividedString[2].split(",");
 
@@ -91,15 +92,6 @@ public class united_we_stand extends generic_search {
 		}
 
 		return grid;
-	}
-
-	public static void printGrid(int[][] grid) {
-		for (int[] row : grid) {
-			for (int cell : row) {
-				System.out.print(cell + " ");
-			}
-			System.out.println();
-		}
 	}
 
 }

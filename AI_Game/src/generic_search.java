@@ -77,13 +77,14 @@ public class generic_search {
 			return PathMapper(reconstructPath(uniformCostSearch(coordinatesMap)));
 
 		case "GR1":
-			// return greedySearch1();
+			return PathMapper(reconstructPath(GreedySearch_numOfOrgs(coordinatesMap)));
 		case "GR2":
-			// return greedySearch2();
+			return PathMapper(reconstructPath(GreedySearch_SumMinDistanceBetweenOrgs(coordinatesMap)));
 		case "AS1":
-			// return aStarSearch1();
+			return PathMapper(reconstructPath(AS_Search_numOfOrgs(coordinatesMap)));
 		case "AS2":
-			// return aStarSearch2();
+			return PathMapper(reconstructPath(AS_Search_SumMinDistanceBetweenOrgs(coordinatesMap)));
+
 		default:
 			throw new IllegalArgumentException("Unknown strategy: " + strategy);
 		}
@@ -288,6 +289,165 @@ public class generic_search {
 
 		System.out.print("no Solution");
 		return null;
+	}
+
+	private static Node GreedySearch_numOfOrgs(Map<Integer, int[]> coordinatesMap) {
+		System.out.println(organismList + "orgList");
+
+		Node root = new Node(coordinatesMap, null, null, organismList, 0);
+		if (goalTest(root)) {
+			System.out.print("root");
+			return root;
+		}
+
+		PriorityQueue<Node> queue = new PriorityQueue<>(
+				(node1, node2) -> Integer.compare(node1.organismList.size(), node2.organismList.size()));
+
+		queue.add(root);
+		checkAddState(root);
+
+		while (!queue.isEmpty()) {
+			Node node = queue.poll();
+
+			for (Node child : expand(node)) {
+				if (goalTest(child)) {
+					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
+							+ "  " + child.grid + "  with cost: " + child.cost);
+					return child;
+				}
+				if (!child.isDead && checkAddState(child)) {
+					queue.add(child);
+				}
+			}
+		}
+
+		System.out.print("no Solution");
+		return null;
+	}
+
+	private static Node AS_Search_numOfOrgs(Map<Integer, int[]> coordinatesMap) {
+		System.out.println(organismList + "orgList");
+
+		Node root = new Node(coordinatesMap, null, null, organismList, 0);
+		if (goalTest(root)) {
+			System.out.print("root");
+			return root;
+		}
+
+		PriorityQueue<Node> queue = new PriorityQueue<>((node1, node2) -> Integer
+				.compare(node1.cost + node1.organismList.size(), node2.cost + node2.organismList.size()));
+
+		queue.add(root);
+		checkAddState(root);
+
+		while (!queue.isEmpty()) {
+			Node node = queue.poll();
+
+			for (Node child : expand(node)) {
+				if (goalTest(child)) {
+					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
+							+ "  " + child.grid + "  with cost: " + child.cost);
+					return child;
+				}
+				if (!child.isDead && checkAddState(child)) {
+					queue.add(child);
+				}
+			}
+		}
+
+		System.out.print("no Solution");
+		return null;
+	}
+	/////////// 2nd Heuristic
+
+	private static Node GreedySearch_SumMinDistanceBetweenOrgs(Map<Integer, int[]> coordinatesMap) {
+		System.out.println(organismList + "orgList");
+
+		Node root = new Node(coordinatesMap, null, null, organismList, 0);
+		if (goalTest(root)) {
+			System.out.print("root");
+			return root;
+		}
+
+		PriorityQueue<Node> queue = new PriorityQueue<>(
+				(node1, node2) -> Integer.compare(heuristic(node1.organismList), heuristic(node2.organismList)));
+
+		queue.add(root);
+		checkAddState(root);
+
+		while (!queue.isEmpty()) {
+			Node node = queue.poll();
+
+			for (Node child : expand(node)) {
+				if (goalTest(child)) {
+					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
+							+ "  " + child.grid + "  with cost: " + child.cost);
+					return child;
+				}
+				if (!child.isDead && checkAddState(child)) {
+					queue.add(child);
+				}
+			}
+		}
+
+		System.out.print("no Solution");
+		return null;
+	}
+
+	// 1st Heuristic
+	private static Node AS_Search_SumMinDistanceBetweenOrgs(Map<Integer, int[]> coordinatesMap) {
+		System.out.println(organismList + "orgList");
+
+		Node root = new Node(coordinatesMap, null, null, organismList, 0);
+		if (goalTest(root)) {
+			System.out.print("root");
+			return root;
+		}
+
+		PriorityQueue<Node> queue = new PriorityQueue<>((node1, node2) -> Integer
+				.compare(node1.cost + heuristic(node1.organismList), node2.cost + heuristic(node2.organismList)));
+
+		queue.add(root);
+		checkAddState(root);
+
+		while (!queue.isEmpty()) {
+			Node node = queue.poll();
+
+			for (Node child : expand(node)) {
+				if (goalTest(child)) {
+					System.out.print(child.organismList.get(0).getId() + "heeeeeeey" + child.organismList.get(0).size
+							+ "  " + child.grid + "  with cost: " + child.cost);
+					return child;
+				}
+				if (!child.isDead && checkAddState(child)) {
+					queue.add(child);
+				}
+			}
+		}
+
+		System.out.print("no Solution");
+		return null;
+	}
+
+	private static int heuristic(ArrayList<Organism> organismList) {
+		int heuristicValue = 0;
+		for (int i = 0; i < organismList.size(); i++) {
+			int minDistance = Integer.MAX_VALUE;
+			for (int j = i + 1; j < organismList.size(); j++) {
+				if (organismList.get(i) != organismList.get(j)) {
+					int dist = ManhattanDistance(organismList.get(i), organismList.get(j));
+					minDistance = Math.min(minDistance, dist);
+				}
+			}
+			if (i < organismList.size() - 1) {
+				heuristicValue += minDistance;
+			}
+		}
+		return heuristicValue;
+	}
+
+	private static int ManhattanDistance(Organism o1, Organism o2) {
+		return Math.abs(o1.row - o2.row) + Math.abs(o1.column - o2.column);
 	}
 
 	private static Map<Integer, int[]> deepCopyGrid(Map<Integer, int[]> original) {

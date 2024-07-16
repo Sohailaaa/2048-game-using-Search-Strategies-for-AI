@@ -1,4 +1,4 @@
-
+package code;
 public class Organism {
 	int id;
 	int size;

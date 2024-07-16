@@ -1,3 +1,5 @@
+package code;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,7 +13,7 @@ import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Set;
 
-public class generic_search {
+public class GenericSearch {
 	public static int row;
 	public static int column;
 	public static int[][] grid;
@@ -37,6 +39,9 @@ public class generic_search {
 		List<String> path = new ArrayList<>();
 		int row = 0;
 		int col = 0;
+		if(node == null) {
+			return "nosolution";
+		}
 		while (node != null) {
 			int[] action = node.action;
 			if (action != null) {
@@ -49,7 +54,7 @@ public class generic_search {
 				}
 
 				String direction = directionMapper(action[1]);
-				String step = direction + "_" + row + "_" + col;
+				String step = direction + "_" + col + "_" + row;
 				path.add(step);
 			}
 			node = node.parent;
@@ -120,7 +125,7 @@ public class generic_search {
 		totalCost = 0;
 		numOfNodesExpanded = 0;
 
-		Map<Integer, int[]> coordinatesMap = reshape(united_we_stand.stringToGrid(gridG));
+		Map<Integer, int[]> coordinatesMap = reshape(UnitedWeStandSearch.stringToGrid(gridG));
 		visited = new HashMap<>();
 		// printCoordinatesMap(coordinatesMap);
 		switch (strategy) {
@@ -159,7 +164,7 @@ public class generic_search {
 	// Transforms grid from 2D array of integers, into a map of
 	// integers with their corresponding coordinates.
 	public static Map<Integer, int[]> reshape(int[][] grid) {
-		printGrid(grid);
+		//printGrid(grid);
 
 		Map<Integer, int[]> coordinatesMap = new HashMap<>();
 
@@ -178,7 +183,7 @@ public class generic_search {
 
 			}
 		}
-		System.out.println("hashmap" + coordinatesMap);
+		//System.out.println("hashmap" + coordinatesMap);
 		return coordinatesMap;
 	}
 
@@ -219,10 +224,10 @@ public class generic_search {
 			visited.put(hValue, n.cost);
 			return true;
 		}
-		if (n.cost < visited.get(hValue)) {
-			visited.put(hValue, n.cost);
-			return true;
-		}
+//		if (n.cost < visited.get(hValue)) {
+//			visited.put(hValue, n.cost);
+//			return true;
+//		}
 		return false;
 	}
 
@@ -250,7 +255,7 @@ public class generic_search {
 	}
 
 	private static Node breadthFirstSearch(Map<Integer, int[]> gridInitial, int BfORDF) {
-		System.out.println(organismList + "orgList");
+		//System.out.println(organismList + "orgList");
 
 		Node root = new Node(gridInitial, null, null, organismList, 0);
 		if (goalTest(root)) {
@@ -284,12 +289,12 @@ public class generic_search {
 
 		}
 
-		System.out.print("no Solution");
+		//System.out.print("no Solution");
 		return null;
 	}
 
 	private static Node iterativeDeepeningSearch(Map<Integer, int[]> gridInitial, int maxDepth) {
-		System.out.println(organismList + "orgList");
+		//System.out.println(organismList + "orgList");
 
 		for (int depth = 1; depth <= maxDepth; depth++) {
 			Node result = depthLimitedSearch(new Node(gridInitial, null, null, organismList, 0), depth);
@@ -298,7 +303,7 @@ public class generic_search {
 			}
 		}
 
-		System.out.print("no Solution");
+		//System.out.print("no Solution");
 		return null;
 	}
 
@@ -331,7 +336,7 @@ public class generic_search {
 	}
 
 	public static Node uniformCostSearch(Map<Integer, int[]> gridInitial) {
-		System.out.println(organismList + "orgList");
+		//System.out.println(organismList + "orgList");
 
 		Node root = new Node(gridInitial, null, null, organismList, 0);
 		if (goalTest(root)) {
@@ -359,12 +364,12 @@ public class generic_search {
 			}
 		}
 
-		System.out.print("no Solution");
+		//System.out.print("no Solution");
 		return null;
 	}
 
 	private static Node GreedySearch_numOfOrgs(Map<Integer, int[]> coordinatesMap) {
-		System.out.println(organismList + "orgList");
+		//System.out.println(organismList + "orgList");
 
 		Node root = new Node(coordinatesMap, null, null, organismList, 0);
 		if (goalTest(root)) {
@@ -395,12 +400,12 @@ public class generic_search {
 			}
 		}
 
-		System.out.print("no Solution");
+		//System.out.print("no Solution");
 		return null;
 	}
 
 	private static Node AS_Search_numOfOrgs(Map<Integer, int[]> coordinatesMap) {
-		System.out.println(organismList + "orgList");
+		//System.out.println(organismList + "orgList");
 
 		Node root = new Node(coordinatesMap, null, null, organismList, 0);
 		if (goalTest(root)) {
@@ -431,13 +436,13 @@ public class generic_search {
 			}
 		}
 
-		System.out.print("no Solution");
+		//System.out.print("no Solution");
 		return null;
 	}
 	/////////// 2nd Heuristic
 
 	private static Node GreedySearch_SumMinDistanceBetweenOrgs(Map<Integer, int[]> coordinatesMap) {
-		System.out.println(organismList + "orgList");
+		//System.out.println(organismList + "orgList");
 
 		Node root = new Node(coordinatesMap, null, null, organismList, 0);
 		if (goalTest(root)) {
@@ -468,13 +473,13 @@ public class generic_search {
 			}
 		}
 
-		System.out.print("no Solution");
+		//System.out.print("no Solution");
 		return null;
 	}
 
 	// 1st Heuristic
 	private static Node AS_Search_SumMinDistanceBetweenOrgs(Map<Integer, int[]> coordinatesMap) {
-		System.out.println(organismList + "orgList");
+		//System.out.println(organismList + "orgList");
 
 		Node root = new Node(coordinatesMap, null, null, organismList, 0);
 		if (goalTest(root)) {
@@ -505,7 +510,7 @@ public class generic_search {
 			}
 		}
 
-		System.out.print("no Solution");
+		//System.out.print("no Solution");
 		return null;
 	}
 

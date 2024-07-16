@@ -1,10 +1,11 @@
+package code;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class united_we_stand extends generic_search {
+public class UnitedWeStandSearch extends GenericSearch {
 	public static void main(String[] args) {
 //		 int[][] grid = genGrid();
 		// String grid = "4;3;0,1,2,1,0,2;2,0,3,0,1,2,1,0,0,0;";
@@ -16,10 +17,20 @@ public class united_we_stand extends generic_search {
 		// 96 Gr1 // 69 Gr2 //27 As1//27 As2
 		String grid = "8;6;2,1,4,3,4,2,2,0,4,4,5,2,2,3,2,4,5,5,4,5,2,2;6,4,6,2,7,5,7,2,6,3,3,0,3,5,7,0,3,1,3,3,5,1;";
 		// String grid = "6;6;2,1,2,0;0,5,0,2,3,0,3,5,0,0,3,1,3,3,5,1;";
-
-		String path = generic_search.search(grid, "GR2", false);
+		String grid0 = "4;3;0,1,2,1,0,2;2,0,3,0,1,2,1,0,0,0;";
+		String grid1 = "4;3;0,1,2,1,0,2;2,0,3,0,1,2,1,0,0,0,1,1;";
+		String grid2 = "9;7;4,2,6,5,5,6,1,5,6,1,8,1,8,2,4,3,6,0,7,5;0,1,0,2,0,3,0,5,1,4,6,3,6,6,2,0,0,4,3,3,8,4,3,0,8,6,5,4,5,1,0,0,3,2,8,0,2,2,6,2,7,3,5,2,5,3,2,6,4,6,0,6,1,6,1,2,1,3,8,3;";
+		String grid3 = "8;6;2,1,4,3,4,2,2,0,4,4,5,2,2,3,2,4,5,5,4,5,2,2;6,4,6,2,7,5,7,2,6,3,3,0,3,5,7,0,3,1,3,3,5,1;";
+		String path = GenericSearch.search(grid2, "GR1", false);
 		System.out.print(path);
 
+	}
+
+	public static String solve(String grid, String strategy, boolean visualize) {
+		UnitedWeStandSearch searchAgent = new UnitedWeStandSearch();
+		String results = search(grid, strategy, visualize);
+
+		return results;
 	}
 
 	public static String gridToString(int[][] grid) {

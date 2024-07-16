@@ -1,4 +1,4 @@
-
+package code;
 import java.util.*;
 
 public class Node implements Comparable<Node> {
@@ -98,9 +98,9 @@ public class Node implements Comparable<Node> {
 	}
 
 	public static boolean boundaryCheck(int[] coordinates) {
-		if (coordinates[0] < 0 || coordinates[0] > generic_search.row - 1) // checks rows x
+		if (coordinates[0] < 0 || coordinates[0] > GenericSearch.row - 1) // checks rows x
 			return true;
-		else if (coordinates[1] < 0 || coordinates[1] > generic_search.column - 1) // checks columns y
+		else if (coordinates[1] < 0 || coordinates[1] > GenericSearch.column - 1) // checks columns y
 			return true;
 
 		return false;

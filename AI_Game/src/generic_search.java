@@ -41,7 +41,7 @@ public class generic_search {
 			int[] action = node.action;
 			if (action != null) {
 				int org_id = action[0];
-				for (Organism o : node.organismList) {
+				for (Organism o : node.parent.organismList) {
 					if (o.id == org_id) {
 						row = o.row;
 						col = o.column;

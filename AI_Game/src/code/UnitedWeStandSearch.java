@@ -68,10 +68,10 @@ public class UnitedWeStandSearch extends GenericSearch {
 
 	public static int[][] genGrid() {
 		Random random = new Random();
-		int rows = 4; // Number of rows in the grid
-		int cols = 4; // Number of columns in the grid
-		int maxMicroOrganisms = 7; // Maximum number of microorganisms
-		int maxObstacles = 4; // Maximum number of obstacles
+		int rows = 10; // Number of rows in the grid
+		int cols = 10; // Number of columns in the grid
+		int maxMicroOrganisms = 20; // Maximum number of microorganisms
+		int maxObstacles = 30; // Maximum number of obstacles
 
 		int[][] grid = new int[rows][cols];
 

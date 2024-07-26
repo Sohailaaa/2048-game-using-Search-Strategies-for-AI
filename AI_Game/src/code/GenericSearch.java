@@ -35,8 +35,11 @@ public class GenericSearch {
 		return path;
 	}
 
-	static String reconstructPath(Node node) {
+
+	static String reconstructPath(Node node ,boolean visualize) {
 		List<String> path = new ArrayList<>();
+		List<Map<Integer, int[]>> gridSteps = new ArrayList<>();
+
 		int row = 0;
 		int col = 0;
 		if(node == null) {
@@ -57,10 +60,15 @@ public class GenericSearch {
 				String step = direction + "_" + col + "_" + row;
 				path.add(step);
 			}
+				if (visualize) {
+				if (node.grid != null) {
+					gridSteps.add(new HashMap<>(node.grid));
+				}
+			}
 			node = node.parent;
 		}
 		Collections.reverse(path);
-
+		Collections.reverse(gridSteps);
 		StringBuilder result = new StringBuilder();
 		for (String step : path) {
 			result.append(step).append(",");
@@ -72,9 +80,33 @@ public class GenericSearch {
 		}
 
 		result.append(totalCost).append(";").append(numOfNodesExpanded);
-
+	if (visualize) {
+			for (Map<Integer, int[]> gridStep : gridSteps) {
+				printGridStep(gridStep);
+			}
+		}
 		return result.toString();
 	}
+	
+	private static void printGridStep(Map<Integer, int[]> gridStep) {
+		int[][] tempGrid = new int[grid.length][grid[0].length];
+
+		for (Map.Entry<Integer, int[]> entry : gridStep.entrySet()) {
+			int id = entry.getKey();
+			int[] coord = entry.getValue();
+			tempGrid[coord[0]][coord[1]] = id;
+		}
+
+		for (int[] row : tempGrid) {
+			for (int cell : row) {
+				System.out.print(cell + " ");
+			}
+			System.out.println();
+		}
+		System.out.println();
+	}
+
+
 
 	public static String directionMapper(int direction) {
 		switch (direction) {
@@ -124,28 +156,28 @@ public class GenericSearch {
 		organismList = new ArrayList<>();
 		totalCost = 0;
 		numOfNodesExpanded = 0;
-
+        grid = UnitedWeStandSearch.stringToGrid(gridG);
 		Map<Integer, int[]> coordinatesMap = reshape(UnitedWeStandSearch.stringToGrid(gridG));
 		visited = new HashMap<>();
 		// printCoordinatesMap(coordinatesMap);
 		switch (strategy) {
 		case "BF":
-			return reconstructPath(breadthFirstSearch(coordinatesMap, 1));
+			return reconstructPath(breadthFirstSearch(coordinatesMap, 1), visualize);
 		case "DF":
-			return (reconstructPath(breadthFirstSearch(coordinatesMap, 2)));
+			return (reconstructPath(breadthFirstSearch(coordinatesMap, 2), visualize));
 		case "ID":
-			return (reconstructPath(iterativeDeepeningSearch(coordinatesMap, 1000)));
+			return (reconstructPath(iterativeDeepeningSearch(coordinatesMap, 1000), visualize));
 		case "UC":
-			return (reconstructPath(uniformCostSearch(coordinatesMap)));
+			return (reconstructPath(uniformCostSearch(coordinatesMap), visualize));
 
 		case "GR1":
-			return (reconstructPath(GreedySearch_numOfOrgs(coordinatesMap)));
+			return (reconstructPath(GreedySearch_numOfOrgs(coordinatesMap), visualize));
 		case "GR2":
-			return (reconstructPath(GreedySearch_SumMinDistanceBetweenOrgs(coordinatesMap)));
+			return (reconstructPath(GreedySearch_SumMinDistanceBetweenOrgs(coordinatesMap), visualize));
 		case "AS1":
-			return (reconstructPath(AS_Search_numOfOrgs(coordinatesMap)));
+			return (reconstructPath(AS_Search_numOfOrgs(coordinatesMap), visualize));
 		case "AS2":
-			return (reconstructPath(AS_Search_SumMinDistanceBetweenOrgs(coordinatesMap)));
+			return (reconstructPath(AS_Search_SumMinDistanceBetweenOrgs(coordinatesMap), visualize));
 
 		default:
 			throw new IllegalArgumentException("Unknown strategy: " + strategy);

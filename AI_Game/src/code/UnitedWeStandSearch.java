@@ -22,7 +22,8 @@ public class UnitedWeStandSearch extends GenericSearch {
 		String grid2 = "9;7;4,2,6,5,5,6,1,5,6,1,8,1,8,2,4,3,6,0,7,5;0,1,0,2,0,3,0,5,1,4,6,3,6,6,2,0,0,4,3,3,8,4,3,0,8,6,5,4,5,1,0,0,3,2,8,0,2,2,6,2,7,3,5,2,5,3,2,6,4,6,0,6,1,6,1,2,1,3,8,3;";
 		String grid3 = "8;6;2,1,4,3,4,2,2,0,4,4,5,2,2,3,2,4,5,5,4,5,2,2;6,4,6,2,7,5,7,2,6,3,3,0,3,5,7,0,3,1,3,3,5,1;";
 		// String path = GenericSearch.search(grid2, "GR1", false);
-		genGrid();
+		//System.out.println("grid" + genGrid());
+		System.out.println("Answer" +search(grid3,"BF",true));
 		// System.out.print(path);
 
 	}
@@ -67,46 +68,72 @@ public class UnitedWeStandSearch extends GenericSearch {
 		return grid;
 	}
 
-	public static int[][] genGrid() {
-		Random random = new Random();
-		int rows = random.nextInt(10) + 1; // Number of rows in the grid
-		int cols = random.nextInt(10) + 1; // Number of columns in the grid
-		int maxMicroOrganisms = 20; // Maximum number of microorganisms
-		int numOfOrganism = 0;
-		int numOfObstacles = 0;
+	public static String genGrid() {
+	    Random random = new Random();
+	    int rows = random.nextInt(10) + 1; // Number of rows in the grid
+	    int cols = random.nextInt(10) + 1; // Number of columns in the grid
+	    int maxMicroOrganisms = 20; // Maximum number of microorganisms
+	    int numOfOrganism = 0;
+	    int numOfObstacles = 0;
 
-		int max = (rows * cols > 20) ? 20 : rows * cols;
-		numOfOrganism = random.nextInt(max) + 1;
-		int availableSpaces = rows * cols - numOfOrganism;
+	    int max = (rows * cols > 20) ? 20 : rows * cols;
+	    numOfOrganism = random.nextInt(max) + 1;
+	    int availableSpaces = rows * cols - numOfOrganism;
 
-		numOfObstacles = random.nextInt(availableSpaces + 1);
+	    numOfObstacles = random.nextInt(availableSpaces + 1);
 
-		int[][] grid = new int[rows][cols];
+	    int[][] grid = new int[rows][cols];
 
-		// Place microorganisms
-		int placedMicroOrganisms = 0;
-		while (placedMicroOrganisms < numOfOrganism) {
-			int row = random.nextInt(rows);
-			int col = random.nextInt(cols);
-			if (grid[row][col] == 0) {
-				grid[row][col] = placedMicroOrganisms + 1;
-				placedMicroOrganisms++;
-			}
-		}
+	    // Place microorganisms
+	    int placedMicroOrganisms = 0;
+	    while (placedMicroOrganisms < numOfOrganism) {
+	        int row = random.nextInt(rows);
+	        int col = random.nextInt(cols);
+	        if (grid[row][col] == 0) {
+	            grid[row][col] = placedMicroOrganisms + 1;
+	            placedMicroOrganisms++;
+	        }
+	    }
 
-		// Place obstacles
-		int placedObstacles = 0;
-		int id = -1;
-		while (placedObstacles < numOfObstacles) {
-			int row = random.nextInt(rows);
-			int col = random.nextInt(cols);
-			if (grid[row][col] == 0) {
-				grid[row][col] = id;
-				id--;
-				placedObstacles++;
-			}
-		}
+	    // Place obstacles
+	    int placedObstacles = 0;
+	    int id = -1;
+	    while (placedObstacles < numOfObstacles) {
+	        int row = random.nextInt(rows);
+	        int col = random.nextInt(cols);
+	        if (grid[row][col] == 0) {
+	            grid[row][col] = id;
+	            id--;
+	            placedObstacles++;
+	        }
+	    }
 
-		return grid;
+	    // Convert grid to string format
+	    StringBuilder organisms = new StringBuilder();
+	    StringBuilder obstacles = new StringBuilder();
+
+	    for (int r = 0; r < rows; r++) {
+	        for (int c = 0; c < cols; c++) {
+	            if (grid[r][c] > 0) {
+	                organisms.append(c).append(",").append(r).append(",");
+	            } else if (grid[r][c] < 0) {
+	                obstacles.append(c).append(",").append(r).append(",");
+	            }
+	        }
+	    }
+
+	    // Remove the trailing commas
+	    if (organisms.length() > 0) {
+	        organisms.setLength(organisms.length() - 1);
+	    }
+	    if (obstacles.length() > 0) {
+	        obstacles.setLength(obstacles.length() - 1);
+	    }
+
+	    // Construct the final string
+	    String gridString = cols + ";" + rows + ";" + organisms.toString() + ";" + obstacles.toString() + ";";
+
+	    return gridString;
 	}
+
 }
